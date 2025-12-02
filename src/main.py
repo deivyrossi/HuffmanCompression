@@ -144,6 +144,6 @@ def main():
             
         print(f"Bloco {i+1} comprimido e salvo.")
 
-# --- Executa o programa ---
+# --- Executa o programa 
 if __name__ == "__main__":
     main()
