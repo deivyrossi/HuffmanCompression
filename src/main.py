@@ -71,7 +71,7 @@ def construir_arvore(frequencias):
   
     # O Python dá erro se tentar comparar um Nó (Lista) com uma Palavra (String)
     # quando as frequências são iguais.
-    # Solução: Adicionamos um número sequencial (contador) na tupla.
+    # Solução: Um número sequencial (contador) na tupla.
     # Se as frequências forem iguais, ele desempata pelo número
     contador_desempate = 0 
     
