@@ -2,14 +2,18 @@
 
 Este projeto apresenta uma implementação prática do **Algoritmo de Huffman** para compressão de dados sem perdas (lossless). O software foi desenvolvido em **Python** como parte da disciplina de Algoritmos e Estruturas de Dados do CEFET-MG.
 
-O programa lê textos de entrada, calcula a frequência das palavras, constrói a árvore de Huffman, gera os códigos binários e produz um arquivo de saída contendo os dados comprimidos (em bytes reais) juntamente com os metadados necessários para a descompressão.
+O programa processa textos de entrada, constrói a Árvore de Huffman baseada na frequência das palavras e gera um arquivo de saída detalhado. Diferente de compactadores comerciais, salvando o "texto comprimido" como uma sequência visível de caracteres '0' e '1', permitindo fácil inspeção visual da lógica de codificação.
 
 ##  Funcionalidades
 
-* **Leitura de Blocos:** Processa múltiplos textos separados por linhas em branco em um único arquivo de entrada.
-* **Compressão Real:** Converte as strings de "0s" e "1s" em *bytes* reais para economizar espaço em disco.
-* **Tratamento de Padding:** Calcula e armazena os bits de preenchimento (padding) para garantir a integridade dos dados binários.
-* **Persistência de Metadados:** Salva a tabela de códigos (em formato JSON) e a informação de padding no cabeçalho do arquivo de saída.
+* **Processamento em Blocos:** Capaz de ler múltiplos textos separados por linhas em branco em um único arquivo de entrada.
+* **Algoritmo de Huffman Completo:**
+    * Contagem de frequência de palavras.
+    * Uso de Fila de Prioridade (Min-Heap).
+    * Construção da Árvore Binária.
+    * Geração de códigos prefixados via percurso em profundidade (DFS).
+* **Saída Legível:** O arquivo final contém o dicionário de códigos (formatado em JSON) e a sequência binária resultante em formato de texto.
+* **Preservação de Dados:** O algoritmo diferencia maiúsculas/minúsculas e pontuação, garantindo que o processo seja *lossless* (sem perda de informação).
 
 ##  Como Executar
 
@@ -22,7 +26,8 @@ Este projeto não possui dependências externas complexas e utiliza apenas bibli
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/deivyrossi/HuffmanCompression
+    git clone https://github.com/deivyrossi/HuffmanCompression.git
+    cd HuffmanCompression
     ```
 
 2.  **Verifique o arquivo de entrada:**
@@ -55,19 +60,24 @@ A organização de pastas segue o padrão solicitado na especificação do traba
 
 ## Formato do Arquivo de Saída (`output.dat`)
 
-O arquivo gerado é um híbrido de texto e dados binários. Para cada bloco de texto processado, o formato segue a seguinte estrutura:
+Para facilitar a correção e o entendimento, o arquivo de saída é puramente textual e segue esta estrutura para cada bloco processado:
 
-1.  **Cabeçalho de Identificação:** `--- BLOCO X ---`
-2.  **Metadado de Padding:** `PADDING:N` (Onde N é o número de bits de preenchimento adicionados ao final).
-3.  **Mapa de Códigos (Árvore):** Uma linha contendo a estrutura da árvore/dicionário serializada em JSON. Ex: `{"palavra": "001", ...}`.
-4.  **Dados Comprimidos:** O conteúdo binário (bytes reais) correspondente ao texto comprimido.
+1.  **Cabeçalho:** `--- BLOCO X ---`
+2.  **Mapa de Códigos:** A estrutura da árvore serializada em formato JSON (indentado para leitura humana), mostrando qual código binário pertence a qual palavra.
+3.  **Texto Comprimido:** A representação do texto original convertida para uma longa string de 0s e 1s.
 
-*Exemplo visual de um bloco no output:*
+*Exemplo:*
 ```text
 --- BLOCO 1 ---
-PADDING:4
-{"computador": "1011", "dados": "1100", ...}
-[BYTES BINÁRIOS ILEGÍVEIS AQUI]
+MAPA DE CÓDIGOS:
+{
+    "computador": "1011",
+    "dados": "1100",
+    "instruções": "000"
+}
+
+TEXTO COMPRIMIDO (REPRESENTAÇÃO BINÁRIA):
+101111000000...
 ```
 
 
@@ -83,9 +93,7 @@ PADDING:4
 
 4. Geração de Códigos (DFS): Um percurso em profundidade percorre a árvore (Esquerda=0, Direita=1) para atribuir códigos únicos às folhas (palavras).
 
-5. Conversão Binária: O texto é traduzido para uma sequência de bits.
-
-6. Bit Packing: A sequência de bits é fatiada em grupos de 8, convertida em inteiros e escrita como bytes no arquivo final.
+5. Codificação: O texto original é relido e cada palavra é substituída pelo seu código binário correspondente, gerando uma string contínua de zeros e uns.
 
 
 ## Autor
